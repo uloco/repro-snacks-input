@@ -1,43 +1,9 @@
-local root = vim.fn.fnamemodify("./.repro", ":p")
+vim.env.LAZY_STDPATH = ".repro"
+load(vim.fn.system("curl -s https://raw.githubusercontent.com/folke/lazy.nvim/main/bootstrap.lua"))()
 
--- set stdpaths to use .repro
-for _, name in ipairs({ "config", "data", "state", "cache" }) do
-	vim.env[("XDG_%s_HOME"):format(name:upper())] = root .. "/" .. name
-end
-
--- bootstrap lazy
-local lazypath = root .. "/plugins/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-	vim.fn.system({
-		"git",
-		"clone",
-		"--filter=blob:none",
-		"--single-branch",
-		"https://github.com/folke/lazy.nvim.git",
-		lazypath,
-	})
-end
-vim.opt.runtimepath:prepend(lazypath)
-
--- install plugins
-local plugins = {
-	-- do not remove the colorscheme!
-	"folke/tokyonight.nvim",
-	"folke/snacks.nvim",
-	-- add any other pugins here
-}
-require("lazy").setup(plugins, {
-	root = root .. "/plugins",
+require("lazy.minit").repro({
+	spec = {
+		{ "folke/snacks.nvim", opts = { input = { enable = true } } },
+		-- add any other plugins here
+	},
 })
-
--- add anything else here
-vim.opt.termguicolors = true
--- do not remove the colorscheme!
-vim.cmd([[colorscheme tokyonight]])
-
-require("snacks").setup({
-	input = { enable = true },
-  picker = { enable = true },
-})
-
-
